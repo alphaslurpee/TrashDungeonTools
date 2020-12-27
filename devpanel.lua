@@ -660,28 +660,6 @@ function TDT:CreateDevPanel(frame)
         end)
         container:AddChild(button3)
 
-        local button4 = AceGUI:Create("Button")
-        button4:SetText("Export Expansion")
-        button4:SetCallback("OnClick",function()
-            local dungeons = {}
-            for i = 29,36 do
-                TDT:CleanEnemyData(i)
-                dungeons[i] = TDT.dungeonEnemies[i]
-            end
-            local export = TDT:TableToString(dungeons,true,5)
-            TDT.main_frame.ExportFrame:ClearAllPoints()
-            TDT.main_frame.ExportFrame:Show()
-            TDT.main_frame.ExportFrame:SetPoint("CENTER", TDT.main_frame,"CENTER",0,50)
-            TDT.main_frame.ExportFrameEditbox:SetText(export)
-            TDT.main_frame.ExportFrameEditbox:HighlightText(0, slen(export))
-            TDT.main_frame.ExportFrameEditbox:SetFocus()
-        end)
-        container:AddChild(button4)
-
-
-
-
-
         updateDropdown(nil,currentEnemyIdx)
         end
 

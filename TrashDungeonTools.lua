@@ -118,7 +118,6 @@ local defaultSavedVars = {
             numberCustomColors = 12,
         },
         language = TDT:GetLocaleIndex(),
-        dungeonImport = {},
 	},
 }
 do
@@ -675,9 +674,6 @@ function TDT:ShowInterface(force)
             self.draggedBlip = nil
         end
         TDT:UpdateBottomText()
-        if not next(db.dungeonImport) then
-            TDT:OpenNoDungeonDataWarning()
-        end
 	end
 end
 
@@ -1479,24 +1475,6 @@ function TDT:MakeSidePanel(frame)
         GameTooltip:Show()
     end)
     frame.MDIButton.frame:SetScript("OnLeave",function()
-    end)
-
-    --Data Import
-    frame.DataImportButton = AceGUI:Create("Button")
-    frame.DataImportButton:SetText(L["Import Data"])
-    frame.DataImportButton:SetWidth(buttonWidth)
-    frame.DataImportButton.frame:SetNormalFontObject(fontInstance)
-    frame.DataImportButton.frame:SetHighlightFontObject(fontInstance)
-    frame.DataImportButton.frame:SetDisabledFontObject(fontInstance)
-    frame.DataImportButton:SetCallback("OnClick",function(widget,callbackName,value)
-        TDT:OpenDataImportDialog()
-    end)
-    frame.DataImportButton.frame:SetScript("OnEnter",function()
-        GameTooltip:SetOwner(frame.DataImportButton.frame, "ANCHOR_BOTTOMLEFT",frame.DataImportButton.frame:GetWidth()*(-2),frame.DataImportButton.frame:GetHeight())
-        GameTooltip:AddLine(L["DataImportButtonTooltip"],1,1,1)
-        GameTooltip:Show()
-    end)
-    frame.DataImportButton.frame:SetScript("OnLeave",function()
         GameTooltip:Hide()
     end)
 
@@ -1545,8 +1523,7 @@ function TDT:MakeSidePanel(frame)
 	frame.sidePanel.WidgetGroup:AddChild(frame.sidePanelExportButton)
 	frame.sidePanel.WidgetGroup:AddChild(frame.LinkToChatButton)
     frame.sidePanel.WidgetGroup:AddChild(frame.LiveSessionButton)
-    frame.sidePanel.WidgetGroup:AddChild(frame.DataImportButton)
-	--frame.sidePanel.WidgetGroup:AddChild(frame.MDIButton)
+    frame.sidePanel.WidgetGroup:AddChild(frame.MDIButton)
     frame.sidePanel.WidgetGroup:AddChild(frame.AutomaticColorsCheckSidePanel)
     frame.sidePanel.WidgetGroup:AddChild(frame.AutomaticColorsCogwheel)
 
@@ -2250,7 +2227,6 @@ local emissaryIds = {[155432]=true,[155433]=true,[155434]=true}
 
 ---Checks if the specified clone is part of the current map configuration
 function TDT:IsCloneIncluded(enemyIdx, cloneIdx)
-    if not next(db.dungeonImport) then return false end
     local preset = TDT:GetCurrentPreset()
     local isCloneBlacktoothEvent = TDT.dungeonEnemies[db.currentDungeonIdx][enemyIdx]["clones"][cloneIdx].blacktoothEvent
     local cloneFaction = TDT.dungeonEnemies[db.currentDungeonIdx][enemyIdx]["clones"][cloneIdx].faction
@@ -2658,8 +2634,6 @@ function TDT:HideAllDialogs()
 	TDT.main_frame.DeleteConfirmationFrame:Hide()
     TDT.main_frame.automaticColorsFrame.CustomColorFrame:Hide()
     TDT.main_frame.automaticColorsFrame:Hide()
-    TDT.main_frame.noDungeonDataWarning:Hide()
-    TDT.main_frame.dataImportDialog:Hide()
     if TDT.main_frame.ConfirmationFrame then TDT.main_frame.ConfirmationFrame:Hide() end
 end
 
@@ -4963,10 +4937,6 @@ function initFrames()
     end
 
     --merge imported dungeon data
-    for dungeonIdx,dungeon in pairs(db.dungeonImport) do
-        TDT.dungeonEnemies[dungeonIdx] = dungeon
-    end
-
     db.nonFullscreenScale = db.nonFullscreenScale or 1
     if not db.maximized then db.scale = db.nonFullscreenScale end
 	main_frame:SetFrameStrata(mainFrameStrata)
@@ -5018,8 +4988,6 @@ function initFrames()
 	TDT:MakeSendingStatusBar(main_frame)
 	TDT:MakeAutomaticColorsFrame(main_frame)
     TDT:MakeCustomColorFrame(main_frame.automaticColorsFrame)
-    TDT:CreateDataImportDialog(main_frame)
-    TDT:CreateNoDungeonDataWarning(main_frame)
 
     --devMode
     if db.devMode and TDT.CreateDevPanel then
