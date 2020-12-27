@@ -1,24 +1,24 @@
-local MDT = MDT
-local L = MDT.L
+local TDT = TDT
+local L = TDT.L
 local AceGUI = LibStub("AceGUI-3.0")
 local db
 
-function MDT:OpenDataImportDialog()
-    MDT:HideAllDialogs()
-    local f = MDT.main_frame.dataImportDialog
+function TDT:OpenDataImportDialog()
+    TDT:HideAllDialogs()
+    local f = TDT.main_frame.dataImportDialog
     f:ClearAllPoints()
-    f:SetPoint("CENTER", MDT.main_frame,"CENTER",0,50)
+    f:SetPoint("CENTER", TDT.main_frame,"CENTER",0,50)
     f:Show()
     f.editbox:SetText("")
     f.editbox:SetFocus()
     f.label:SetText(nil)
 end
 
-function MDT:ValidateDataImport(data)
+function TDT:ValidateDataImport(data)
     return true --TODO: y
 end
 
-function MDT:CreateDataImportDialog(frame)
+function TDT:CreateDataImportDialog(frame)
     frame.dataImportDialog = AceGUI:Create("Frame")
     local f = frame.dataImportDialog
     f:SetTitle(L["Import Data"])
@@ -45,9 +45,9 @@ function MDT:CreateDataImportDialog(frame)
     importButton:SetText(L["Import"])
     importButton:SetWidth(100)
     importButton:SetCallback("OnClick", function()
-        local data = MDT:StringToTable(importString, true)
-        if MDT:ValidateDataImport(data) then
-            db = MDT:GetDB()
+        local data = TDT:StringToTable(importString, true)
+        if TDT:ValidateDataImport(data) then
+            db = TDT:GetDB()
             for dungeonIdx,dungeonData in pairs(data) do
                 db.dungeonImport[dungeonIdx] = dungeonData
             end
@@ -61,14 +61,14 @@ function MDT:CreateDataImportDialog(frame)
     f:Hide()
 end
 
-function MDT:OpenNoDungeonDataWarning()
-    local f = MDT.main_frame.noDungeonDataWarning
+function TDT:OpenNoDungeonDataWarning()
+    local f = TDT.main_frame.noDungeonDataWarning
     f:ClearAllPoints()
-    f:SetPoint("CENTER", MDT.main_frame,"CENTER",0,50)
+    f:SetPoint("CENTER", TDT.main_frame,"CENTER",0,50)
     f:Show()
 end
 
-function MDT:CreateNoDungeonDataWarning(frame)
+function TDT:CreateNoDungeonDataWarning(frame)
     frame.noDungeonDataWarning = AceGUI:Create("Frame")
     local f = frame.noDungeonDataWarning
     f:SetTitle(L["Dungeon Data Missing"])
@@ -89,7 +89,7 @@ function MDT:CreateNoDungeonDataWarning(frame)
 
     f.curseforge = AceGUI:Create("EditBox")
     f.curseforge:SetLabel("Curseforge:")
-    f.curseforge:SetText("https://www.curseforge.com/wow/addons/mythic-dungeon-tools")
+    f.curseforge:SetText("https://www.curseforge.com/wow/addons/trash-dungeon-tools")
     f.curseforge:SetWidth(450)
     f:AddChild(f.curseforge)
 

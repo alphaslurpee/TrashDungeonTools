@@ -1,6 +1,6 @@
-local Type, Version = "MDTNewPullButton", 1
+local Type, Version = "TDTNewPullButton", 1
 local AceGUI = LibStub and LibStub("AceGUI-3.0", true)
-local L = MDT.L
+local L = TDT.L
 local width,height = 248,32
 
 --Methods
@@ -13,7 +13,7 @@ local methods = {
         self.callbacks = {};
 
         function self.callbacks.OnClickNormal(_, mouseButton)
-            if not MouseIsOver(MDT.main_frame.sidePanel.pullButtonsScrollFrame.frame) then return end
+            if not MouseIsOver(TDT.main_frame.sidePanel.pullButtonsScrollFrame.frame) then return end
             if(IsControlKeyDown())then
 
             elseif(IsShiftKeyDown()) then
@@ -23,9 +23,9 @@ local methods = {
                     --L_EasyMenu
                 else
                     --normal click?
-                    MDT:AddPull()
-                    if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-                        MDT:LiveSession_SendPulls(MDT:GetPulls())
+                    TDT:AddPull()
+                    if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+                        TDT:LiveSession_SendPulls(TDT:GetPulls())
                     end
                 end
             end
@@ -92,7 +92,7 @@ local methods = {
 
 --Constructor
 local function Constructor()
-    local name = "MDTNewPullButton"..AceGUI:GetNextWidgetNum(Type);
+    local name = "TDTNewPullButton"..AceGUI:GetNextWidgetNum(Type);
     local button = CreateFrame("BUTTON", name, UIParent, "OptionsListButtonTemplate");
     button:SetHeight(height);
     button:SetWidth(width);

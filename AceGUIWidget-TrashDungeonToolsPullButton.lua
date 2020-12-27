@@ -1,7 +1,7 @@
-local Type, Version = "MDTPullButton", 1
+local Type, Version = "TDTPullButton", 1
 local AceGUI = LibStub and LibStub("AceGUI-3.0", true)
-local MDT = MDT
-local L = MDT.L
+local TDT = TDT
+local L = TDT.L
 
 
 local width,height = 248,32
@@ -12,8 +12,8 @@ local next = next
 local dragdrop_overlap = 2000
 
 local function GetDropTarget()
-    local scrollFrame = MDT.main_frame.sidePanel.pullButtonsScrollFrame
-    local buttonList = MDT.main_frame.sidePanel.newPullButtons
+    local scrollFrame = TDT.main_frame.sidePanel.pullButtonsScrollFrame
+    local buttonList = TDT.main_frame.sidePanel.newPullButtons
     local id, button, pos, offset
 
 
@@ -33,9 +33,9 @@ local function GetDropTarget()
 
         -- Is add new pull hovered?
         if not id then
-            local addNewPullButton = MDT.main_frame.sidePanel.newPullButton
+            local addNewPullButton = TDT.main_frame.sidePanel.newPullButton
             if addNewPullButton.frame:IsMouseOver(2) then
-                local maxPulls = #MDT:GetCurrentPreset().value.pulls
+                local maxPulls = #TDT:GetCurrentPreset().value.pulls
                 id = maxPulls
                 button = buttonList[id]
                 pos = "BOTTOM"
@@ -54,7 +54,7 @@ local function GetDropTarget()
         local viewheight = scrollFrame.frame.obj.content:GetHeight()
         if not id and viewheight < scrollFrame.frame:GetHeight() then
             if scrollFrame.frame:IsMouseOver(-viewheight, -1, -dragdrop_overlap, dragdrop_overlap) then
-                local maxPulls = #MDT:GetCurrentPreset().value.pulls
+                local maxPulls = #TDT:GetCurrentPreset().value.pulls
                 id = maxPulls
                 button = buttonList[id]
                 pos = "BOTTOM"
@@ -85,7 +85,7 @@ local function GetDropTarget()
 
     -- Bottom Graceful Area
     if scrollFrame.frame:IsMouseOver(-(scroll_frame_height+1), -100, -dragdrop_overlap, dragdrop_overlap) and scroll_value > scroll_value_max then
-        local maxPulls = #MDT:GetCurrentPreset().value.pulls
+        local maxPulls = #TDT:GetCurrentPreset().value.pulls
         id = maxPulls
         button = buttonList[id]
         pos = "BOTTOM"
@@ -129,18 +129,18 @@ local methods = {
         self.callbacks = {}
 
         function self.callbacks.OnClickNormal(_, mouseButton)
-            if not MouseIsOver(MDT.main_frame.sidePanel.pullButtonsScrollFrame.frame) then return end
+            if not MouseIsOver(TDT.main_frame.sidePanel.pullButtonsScrollFrame.frame) then return end
 
             if(IsControlKeyDown())then
                 if (mouseButton == "LeftButton") then
                     --print("CTRL+MouseButton:Left")
 
-                    if not MDT.U.contains(MDT:GetSelection(), self.index) then
-                        tinsert(MDT:GetSelection(), self.index)
-                        MDT:SetMapSublevel(self.index)
-                        MDT:SetSelectionToPull(MDT:GetSelection())
+                    if not TDT.U.contains(TDT:GetSelection(), self.index) then
+                        tinsert(TDT:GetSelection(), self.index)
+                        TDT:SetMapSublevel(self.index)
+                        TDT:SetSelectionToPull(TDT:GetSelection())
                     else
-                        MDT.U.iremove_if(MDT:GetSelection(), function(entry)
+                        TDT.U.iremove_if(TDT:GetSelection(), function(entry)
                             return entry == self.index
                         end)
                         self:ClearPick()
@@ -149,7 +149,7 @@ local methods = {
             elseif(IsShiftKeyDown()) then
                 if (mouseButton == "LeftButton") then
                     --print("SHIFT+MouseButton:Left")
-                    local selection = MDT:GetSelection()
+                    local selection = TDT:GetSelection()
                     local lastPull = selection[#selection]
                     local step = 1
 
@@ -159,88 +159,88 @@ local methods = {
                     end
 
                     for i=lastPull, self.index, step do
-                        if not MDT.U.contains(selection, i) then
+                        if not TDT.U.contains(selection, i) then
                             tinsert(selection, i)
                         end
                     end
 
-                    MDT:SetMapSublevel(self.index)
-                    MDT:SetSelectionToPull(selection)
+                    TDT:SetMapSublevel(self.index)
+                    TDT:SetSelectionToPull(selection)
                     --print(#selection)
                 elseif (mouseButton == "RightButton") then
-                    local maxPulls = #MDT:GetCurrentPreset().value.pulls
+                    local maxPulls = #TDT:GetCurrentPreset().value.pulls
                     if maxPulls>1 then
-                        MDT:DeletePull(self.index)
+                        TDT:DeletePull(self.index)
                     end
                 end
             else
-                MDT:EnsureDBTables()
+                TDT:EnsureDBTables()
                 if(mouseButton == "RightButton") then
                     -- Add current pull to selection, if not already selected
-                    if not MDT.U.contains(MDT:GetSelection(), self.index) then
-                        if #MDT:GetSelection() == 1 then
-                            MDT:SetSelectionToPull(self.index)
+                    if not TDT.U.contains(TDT:GetSelection(), self.index) then
+                        if #TDT:GetSelection() == 1 then
+                            TDT:SetSelectionToPull(self.index)
                         else
-                            tinsert(MDT:GetSelection(), self.index)
+                            tinsert(TDT:GetSelection(), self.index)
                             self:Pick()
                         end
                     end
 
                     -- Backup color for every selected pull
-                    for _, pullIdx in ipairs(MDT:GetSelection()) do
-                        local button = MDT:GetPullButton(pullIdx)
+                    for _, pullIdx in ipairs(TDT:GetSelection()) do
+                        local button = TDT:GetPullButton(pullIdx)
                         if button then
                             button:BackupColor()
                         end
                     end
 
-                    if #MDT:GetSelection() > 1 then
-                        L_EasyMenu(self.multiselectMenu, MDT.main_frame.sidePanel.optionsDropDown, "cursor", 0 , -15, "MENU")
+                    if #TDT:GetSelection() > 1 then
+                        L_EasyMenu(self.multiselectMenu, TDT.main_frame.sidePanel.optionsDropDown, "cursor", 0 , -15, "MENU")
                     else
-                        MDT:SetMapSublevel(self.index)
-                        MDT:SetSelectionToPull(self.index)
+                        TDT:SetMapSublevel(self.index)
+                        TDT:SetSelectionToPull(self.index)
 
-                        L_EasyMenu(self.menu, MDT.main_frame.sidePanel.optionsDropDown, "cursor", 0 , -15, "MENU")
+                        L_EasyMenu(self.menu, TDT.main_frame.sidePanel.optionsDropDown, "cursor", 0 , -15, "MENU")
                     end
 
                 else
                     --normal click
-                    MDT:GetCurrentPreset().value.selection = { self.index }
-                    MDT:SetMapSublevel(self.index)
-                    MDT:SetSelectionToPull(self.index)
+                    TDT:GetCurrentPreset().value.selection = { self.index }
+                    TDT:SetMapSublevel(self.index)
+                    TDT:SetSelectionToPull(self.index)
                 end
             end
         end
 
         function self.callbacks.OnEnter()
-            MDT.pullTooltip:SetPoint("TOPRIGHT",self.frame,"TOPLEFT",0,0)
-            MDT.pullTooltip:SetPoint("BOTTOMRIGHT",self.frame,"TOPLEFT",-250,-(4+ MDT.pullTooltip.myHeight))
-            local tooltipBottom = MDT.pullTooltip:GetBottom()
-            local mainFrameBottom = MDT.main_frame:GetBottom()
+            TDT.pullTooltip:SetPoint("TOPRIGHT",self.frame,"TOPLEFT",0,0)
+            TDT.pullTooltip:SetPoint("BOTTOMRIGHT",self.frame,"TOPLEFT",-250,-(4+ TDT.pullTooltip.myHeight))
+            local tooltipBottom = TDT.pullTooltip:GetBottom()
+            local mainFrameBottom = TDT.main_frame:GetBottom()
             if tooltipBottom<mainFrameBottom then
-                MDT.pullTooltip:SetPoint("TOPRIGHT",self.frame,"BOTTOMLEFT",0,(4+ MDT.pullTooltip.myHeight))
-                MDT.pullTooltip:SetPoint("BOTTOMRIGHT",self.frame,"BOTTOMLEFT",-250,-4)
+                TDT.pullTooltip:SetPoint("TOPRIGHT",self.frame,"BOTTOMLEFT",0,(4+ TDT.pullTooltip.myHeight))
+                TDT.pullTooltip:SetPoint("BOTTOMRIGHT",self.frame,"BOTTOMLEFT",-250,-4)
             end
             self.entered = true
-            MDT:ActivatePullTooltip(self.index)
+            TDT:ActivatePullTooltip(self.index)
             self.frame:SetScript("OnUpdate", self:CreateUpdateFunction())
             --progressbar
-            if MDT.ProgressBarResetTimer then MDT.ProgressBarResetTimer:Cancel() end
-            local currentForces = MDT:CountForces(self.index)
-            local db = MDT:GetDB()
-            local teeming = MDT:IsCurrentPresetTeeming()
-            MDT:Progressbar_SetValue(MDT.main_frame.sidePanel.ProgressBar,currentForces,teeming and MDT.dungeonTotalCount[db.currentDungeonIdx].teeming or MDT.dungeonTotalCount[db.currentDungeonIdx].normal)
+            if TDT.ProgressBarResetTimer then TDT.ProgressBarResetTimer:Cancel() end
+            local currentForces = TDT:CountForces(self.index)
+            local db = TDT:GetDB()
+            local teeming = TDT:IsCurrentPresetTeeming()
+            TDT:Progressbar_SetValue(TDT.main_frame.sidePanel.ProgressBar,currentForces,teeming and TDT.dungeonTotalCount[db.currentDungeonIdx].teeming or TDT.dungeonTotalCount[db.currentDungeonIdx].normal)
         end
 
         function self.callbacks.OnLeave()
-            MDT.pullTooltip.Model:Hide()
-            MDT.pullTooltip.topString:Hide()
+            TDT.pullTooltip.Model:Hide()
+            TDT.pullTooltip.topString:Hide()
             self.entered = false
             self.frame:SetScript("OnUpdate", nil)
-            MDT:UpdatePullTooltip(MDT.pullTooltip)
-            MDT.pullTooltip:Hide()
-            MDT.ProgressBarResetTimer = C_Timer.NewTimer(0.35, function()
-                MDT:UpdateProgressbar()
+            TDT:UpdatePullTooltip(TDT.pullTooltip)
+            TDT.pullTooltip:Hide()
+            TDT.ProgressBarResetTimer = C_Timer.NewTimer(0.35, function()
+                TDT:UpdateProgressbar()
             end)
         end
 
@@ -266,9 +266,9 @@ local methods = {
                 text = L["Pull Drop Move up"],
                 notCheckable = 1,
                 func = function()
-                    MDT:MovePullUp(self.index)
-                    if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-                        MDT:LiveSession_SendPulls(MDT:GetPulls())
+                    TDT:MovePullUp(self.index)
+                    if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+                        TDT:LiveSession_SendPulls(TDT:GetPulls())
                     end
                 end
             })
@@ -278,9 +278,9 @@ local methods = {
                 text = L["Pull Drop Move down"],
                 notCheckable = 1,
                 func = function()
-                    MDT:MovePullDown(self.index)
-                    if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-                        MDT:LiveSession_SendPulls(MDT:GetPulls())
+                    TDT:MovePullDown(self.index)
+                    if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+                        TDT:LiveSession_SendPulls(TDT:GetPulls())
                     end
                 end
             })
@@ -299,14 +299,14 @@ local methods = {
             text = L["Pull Drop Insert before"],
             notCheckable = 1,
             func = function()
-                MDT:PresetsAddPull(self.index)
-                MDT:ReloadPullButtons()
-                MDT:SetSelectionToPull(self.index)
-                MDT:ColorAllPulls(_, self.index)
-                if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-                    MDT:LiveSession_SendPulls(MDT:GetPulls())
+                TDT:PresetsAddPull(self.index)
+                TDT:ReloadPullButtons()
+                TDT:SetSelectionToPull(self.index)
+                TDT:ColorAllPulls(_, self.index)
+                if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+                    TDT:LiveSession_SendPulls(TDT:GetPulls())
                 end
-                MDT:DrawAllHulls()
+                TDT:DrawAllHulls()
             end
         })
 
@@ -314,14 +314,14 @@ local methods = {
             text = L["Pull Drop Insert after"],
             notCheckable = 1,
 			func = function()
-                MDT:PresetsAddPull(self.index + 1)
-                MDT:ReloadPullButtons()
-				MDT:SetSelectionToPull(self.index + 1)
-                MDT:ColorAllPulls(_, self.index+1)
-                if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-                    MDT:LiveSession_SendPulls(MDT:GetPulls())
+                TDT:PresetsAddPull(self.index + 1)
+                TDT:ReloadPullButtons()
+				TDT:SetSelectionToPull(self.index + 1)
+                TDT:ColorAllPulls(_, self.index+1)
+                if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+                    TDT:LiveSession_SendPulls(TDT:GetPulls())
                 end
-                MDT:DrawAllHulls()
+                TDT:DrawAllHulls()
             end
         })
         if self.index ~= 1 then
@@ -329,14 +329,14 @@ local methods = {
                 text = L["Pull Drop Merge up"],
                 notCheckable = 1,
                 func = function()
-                    local newIndex = MDT:PresetsMergePulls(self.index, self.index - 1)
-                    MDT:ReloadPullButtons()
-                    MDT:SetSelectionToPull(newIndex)
-                    MDT:ColorAllPulls(_, newIndex)
-                    if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-                        MDT:LiveSession_SendPulls(MDT:GetPulls())
+                    local newIndex = TDT:PresetsMergePulls(self.index, self.index - 1)
+                    TDT:ReloadPullButtons()
+                    TDT:SetSelectionToPull(newIndex)
+                    TDT:ColorAllPulls(_, newIndex)
+                    if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+                        TDT:LiveSession_SendPulls(TDT:GetPulls())
                     end
-                    MDT:DrawAllHulls()
+                    TDT:DrawAllHulls()
                 end
             })
         end
@@ -345,14 +345,14 @@ local methods = {
                 text = L["Pull Drop Merge down"],
                 notCheckable = 1,
                 func = function()
-                    local newIndex = MDT:PresetsMergePulls(self.index, self.index + 1)
-                    MDT:ReloadPullButtons()
-                    MDT:SetSelectionToPull(newIndex)
-                    MDT:ColorAllPulls(_, newIndex)
-                    if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-                        MDT:LiveSession_SendPulls(MDT:GetPulls())
+                    local newIndex = TDT:PresetsMergePulls(self.index, self.index + 1)
+                    TDT:ReloadPullButtons()
+                    TDT:SetSelectionToPull(newIndex)
+                    TDT:ColorAllPulls(_, newIndex)
+                    if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+                        TDT:LiveSession_SendPulls(TDT:GetPulls())
                     end
-                    MDT:DrawAllHulls()
+                    TDT:DrawAllHulls()
                 end
             })
         end
@@ -368,50 +368,50 @@ local methods = {
             text = L["Pull Drop Color Settings"],
             notCheckable = 1,
             func = function()
-                MDT:OpenAutomaticColorsDialog()
+                TDT:OpenAutomaticColorsDialog()
             end
         })
         tinsert(self.menu, {
             text = L["Pull Drop Colorize Preset"],
             notCheckable = 1,
             func = function()
-                local db = MDT:GetDB()
+                local db = TDT:GetDB()
                 if not db.colorPaletteInfo.autoColoring then
                     db.colorPaletteInfo.autoColoring = true
-                    MDT.main_frame.AutomaticColorsCheck:SetValue(db.colorPaletteInfo.autoColoring)
-                    MDT.main_frame.AutomaticColorsCheckSidePanel:SetValue(db.colorPaletteInfo.autoColoring)
-                    MDT.main_frame.toggleForceColorBlindMode:SetDisabled(false)
+                    TDT.main_frame.AutomaticColorsCheck:SetValue(db.colorPaletteInfo.autoColoring)
+                    TDT.main_frame.AutomaticColorsCheckSidePanel:SetValue(db.colorPaletteInfo.autoColoring)
+                    TDT.main_frame.toggleForceColorBlindMode:SetDisabled(false)
                 end
-                MDT:SetPresetColorPaletteInfo()
-                MDT:ColorAllPulls()
-                MDT:DrawAllHulls()
+                TDT:SetPresetColorPaletteInfo()
+                TDT:ColorAllPulls()
+                TDT:DrawAllHulls()
             end
         })
         local function swatchFunc()
             local r,g,b = ColorPickerFrame:GetColorRGB()
-            local colorHex = MDT:RGBToHex(r,g,b)
+            local colorHex = TDT:RGBToHex(r,g,b)
             if colorHex == "228b22" then
                 r,g,b = 2*r,2*g,2*b
                 ColorPickerFrame:SetColorRGB(r,g,b)
             end
 
-            MDT:DungeonEnemies_SetPullColor(self.index,r,g,b)
-            MDT:UpdatePullButtonColor(self.index, r, g, b)
-            MDT:DungeonEnemies_UpdateBlipColors(self.index,r,g,b)
-            MDT:DrawAllHulls()
+            TDT:DungeonEnemies_SetPullColor(self.index,r,g,b)
+            TDT:UpdatePullButtonColor(self.index, r, g, b)
+            TDT:DungeonEnemies_UpdateBlipColors(self.index,r,g,b)
+            TDT:DrawAllHulls()
             L_CloseDropDownMenus()
-            if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-                MDT:LiveSession_QueueColorUpdate()
+            if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+                TDT:LiveSession_QueueColorUpdate()
             end
         end
         local function cancelFunc()
             self:RevertColor()
-            MDT:DungeonEnemies_SetPullColor(self.index, self.color.r, self.color.g, self.color.b)
-            MDT:UpdatePullButtonColor(self.index, self.color.r, self.color.g, self.color.b)
-            MDT:DungeonEnemies_UpdateBlipColors(self.index, self.color.r, self.color.g, self.color.b)
-            MDT:DrawAllHulls()
-            if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-                MDT:LiveSession_QueueColorUpdate()
+            TDT:DungeonEnemies_SetPullColor(self.index, self.color.r, self.color.g, self.color.b)
+            TDT:UpdatePullButtonColor(self.index, self.color.r, self.color.g, self.color.b)
+            TDT:DungeonEnemies_UpdateBlipColors(self.index, self.color.r, self.color.g, self.color.b)
+            TDT:DrawAllHulls()
+            if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+                TDT:LiveSession_QueueColorUpdate()
             end
         end
         tinsert(self.menu, {
@@ -440,12 +440,12 @@ local methods = {
             notCheckable = 1,
             func = function()
                 local r,g,b = 34/255,139/255,34/255
-                MDT:DungeonEnemies_SetPullColor(self.index,r,g,b)
-                MDT:UpdatePullButtonColor(self.index, r, g, b)
-                MDT:DungeonEnemies_UpdateBlipColors(self.index,r,g,b)
-                MDT:DrawAllHulls()
-                if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-                    MDT:LiveSession_SendPulls(MDT:GetPulls())
+                TDT:DungeonEnemies_SetPullColor(self.index,r,g,b)
+                TDT:UpdatePullButtonColor(self.index, r, g, b)
+                TDT:DungeonEnemies_UpdateBlipColors(self.index,r,g,b)
+                TDT:DrawAllHulls()
+                if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+                    TDT:LiveSession_SendPulls(TDT:GetPulls())
                 end
             end
         })
@@ -459,28 +459,28 @@ local methods = {
             text = L["Pull Drop Clear Pull"],
             notCheckable = 1,
             func = function()
-				MDT:ClearPull(self.index)
-                if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-                    MDT:LiveSession_SendPulls(MDT:GetPulls())
+				TDT:ClearPull(self.index)
+                if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+                    TDT:LiveSession_SendPulls(TDT:GetPulls())
                 end
             end
         })
         tinsert(self.menu, {
             text = L["Pull Drop Reset Preset"],
             notCheckable = 1,
-            func = function() MDT:OpenClearPresetDialog() end
+            func = function() TDT:OpenClearPresetDialog() end
         })
         if self.maxPulls > 1 then
             tinsert(self.menu, {
                 text = L["Pull Drop Delete"],
                 notCheckable = 1,
                 func = function()
-                    MDT:DeletePull(self.index)
-                    MDT:ColorAllPulls(_, self.index)
-                    if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-                        MDT:LiveSession_SendPulls(MDT:GetPulls())
+                    TDT:DeletePull(self.index)
+                    TDT:ColorAllPulls(_, self.index)
+                    if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+                        TDT:LiveSession_SendPulls(TDT:GetPulls())
                     end
-                    MDT:DrawAllHulls()
+                    TDT:DrawAllHulls()
                 end
             })
             tinsert(self.menu, {
@@ -494,7 +494,7 @@ local methods = {
         tinsert(self.menu, {
             text = L["Pull Drop Close"],
             notCheckable = 1,
-            --func = MDT.main_frame.sidePanel.optionsDropDown:Hide()
+            --func = TDT.main_frame.sidePanel.optionsDropDown:Hide()
             func = nil
         })
 
@@ -505,7 +505,7 @@ local methods = {
             text = L["Pull Drop Insert before"],
             notCheckable = 1,
             func = function()
-                MDT.U.do_if(MDT:GetSelection(), {
+                TDT.U.do_if(TDT:GetSelection(), {
                     condition = function(entry)
                         return entry >= self.index
                     end,
@@ -513,15 +513,15 @@ local methods = {
                         t[key] = t[key] + 1
                     end
                 })
-                MDT:PresetsAddPull(self.index)
-                MDT:ReloadPullButtons()
-                MDT:SetSelectionToPull(self.index)
-                --MDT:UpdateAutomaticColors(self.index)
-                MDT:ColorAllPulls(_, self.index)
-                if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-                    MDT:LiveSession_SendPulls(MDT:GetPulls())
+                TDT:PresetsAddPull(self.index)
+                TDT:ReloadPullButtons()
+                TDT:SetSelectionToPull(self.index)
+                --TDT:UpdateAutomaticColors(self.index)
+                TDT:ColorAllPulls(_, self.index)
+                if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+                    TDT:LiveSession_SendPulls(TDT:GetPulls())
                 end
-                MDT:DrawAllHulls()
+                TDT:DrawAllHulls()
             end
         })
 
@@ -529,7 +529,7 @@ local methods = {
             text = L["Pull Drop Insert after"],
             notCheckable = 1,
             func = function()
-                MDT.U.do_if(MDT:GetSelection(), {
+                TDT.U.do_if(TDT:GetSelection(), {
                     condition = function(entry)
                         return entry > self.index
                     end,
@@ -537,40 +537,40 @@ local methods = {
                         t[key] = t[key] + 1
                     end
                 })
-                MDT:PresetsAddPull(self.index + 1)
-                MDT:ReloadPullButtons()
-				MDT:SetSelectionToPull(self.index + 1)
-                --MDT:UpdateAutomaticColors(self.index + 1)
-                MDT:ColorAllPulls(_, self.index+1)
-                if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-                    MDT:LiveSession_SendPulls(MDT:GetPulls())
+                TDT:PresetsAddPull(self.index + 1)
+                TDT:ReloadPullButtons()
+				TDT:SetSelectionToPull(self.index + 1)
+                --TDT:UpdateAutomaticColors(self.index + 1)
+                TDT:ColorAllPulls(_, self.index+1)
+                if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+                    TDT:LiveSession_SendPulls(TDT:GetPulls())
                 end
-                MDT:DrawAllHulls()
+                TDT:DrawAllHulls()
             end
         })
         tinsert(self.multiselectMenu, {
             text = L["Pull Drop Merge"],
             notCheckable = 1,
             func = function()
-                local selected_pulls = MDT.U.copy(MDT:GetSelection())
+                local selected_pulls = TDT.U.copy(TDT:GetSelection())
                 -- Assure, that the destination is always the last selected_pull, to copy it's options at last
-                MDT.U.iremove_if(selected_pulls, function(pullIdx)
+                TDT.U.iremove_if(selected_pulls, function(pullIdx)
                     return pullIdx == self.index
                 end)
 
-                if not MDT.U.contains(selected_pulls, self.index) then
+                if not TDT.U.contains(selected_pulls, self.index) then
                     tinsert(selected_pulls, self.index)
                 end
 
-                local newIndex = MDT:PresetsMergePulls(selected_pulls, self.index)
-                MDT:ReloadPullButtons()
-                MDT:GetCurrentPreset().value.selection = { newIndex }
-                MDT:SetSelectionToPull(newIndex)
-                MDT:ColorAllPulls(_, newIndex)
-                if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-                    MDT:LiveSession_SendPulls(MDT:GetPulls())
+                local newIndex = TDT:PresetsMergePulls(selected_pulls, self.index)
+                TDT:ReloadPullButtons()
+                TDT:GetCurrentPreset().value.selection = { newIndex }
+                TDT:SetSelectionToPull(newIndex)
+                TDT:ColorAllPulls(_, newIndex)
+                if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+                    TDT:LiveSession_SendPulls(TDT:GetPulls())
                 end
-                MDT:DrawAllHulls()
+                TDT:DrawAllHulls()
             end
         })
         tinsert(self.multiselectMenu, {
@@ -583,58 +583,58 @@ local methods = {
             text = L["Pull Drop Color Settings"],
             notCheckable = 1,
             func = function()
-                MDT:OpenAutomaticColorsDialog()
+                TDT:OpenAutomaticColorsDialog()
             end
         })
         tinsert(self.multiselectMenu, {
             text = L["Pull Drop Colorize Preset"],
             notCheckable = 1,
             func = function()
-                local db = MDT:GetDB()
+                local db = TDT:GetDB()
                 if not db.colorPaletteInfo.autoColoring then
                     db.colorPaletteInfo.autoColoring = true
-                    MDT.main_frame.AutomaticColorsCheck:SetValue(db.colorPaletteInfo.autoColoring)
-                    MDT.main_frame.AutomaticColorsCheckSidePanel:SetValue(db.colorPaletteInfo.autoColoring)
-                    MDT.main_frame.toggleForceColorBlindMode:SetDisabled(false)
+                    TDT.main_frame.AutomaticColorsCheck:SetValue(db.colorPaletteInfo.autoColoring)
+                    TDT.main_frame.AutomaticColorsCheckSidePanel:SetValue(db.colorPaletteInfo.autoColoring)
+                    TDT.main_frame.toggleForceColorBlindMode:SetDisabled(false)
                 end
-                MDT:SetPresetColorPaletteInfo()
-                MDT:ColorAllPulls()
-                MDT:DrawAllHulls()
+                TDT:SetPresetColorPaletteInfo()
+                TDT:ColorAllPulls()
+                TDT:DrawAllHulls()
             end
         })
         local function swatchMultiFunc()
             local r,g,b = ColorPickerFrame:GetColorRGB()
-            local colorHex = MDT:RGBToHex(r,g,b)
+            local colorHex = TDT:RGBToHex(r,g,b)
             if colorHex == "228b22" then
                 r,g,b = 2*r,2*g,2*b
                 ColorPickerFrame:SetColorRGB(r,g,b)
             end
 
-            if not MDT.U.contains(MDT:GetSelection(), self.index) then
-                tinsert(MDT:GetSelection(), self.index)
+            if not TDT.U.contains(TDT:GetSelection(), self.index) then
+                tinsert(TDT:GetSelection(), self.index)
                 self:Pick()
             end
 
-            for _, pullIdx in ipairs(MDT:GetSelection()) do
-                MDT:DungeonEnemies_SetPullColor(pullIdx,r,g,b)
-                MDT:UpdatePullButtonColor(pullIdx, r, g, b)
-                MDT:DungeonEnemies_UpdateBlipColors(pullIdx,r,g,b)
+            for _, pullIdx in ipairs(TDT:GetSelection()) do
+                TDT:DungeonEnemies_SetPullColor(pullIdx,r,g,b)
+                TDT:UpdatePullButtonColor(pullIdx, r, g, b)
+                TDT:DungeonEnemies_UpdateBlipColors(pullIdx,r,g,b)
             end
-            MDT:DrawAllHulls()
+            TDT:DrawAllHulls()
 
             L_CloseDropDownMenus()
-            if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-                MDT:LiveSession_QueueColorUpdate()
+            if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+                TDT:LiveSession_QueueColorUpdate()
             end
         end
         local function cancelMultiFunc()
-            if not MDT.U.contains(MDT:GetSelection(), self.index) then
-                tinsert(MDT:GetSelection(), self.index)
+            if not TDT.U.contains(TDT:GetSelection(), self.index) then
+                tinsert(TDT:GetSelection(), self.index)
                 self:Pick()
             end
 
-            for _, pullIdx in ipairs(MDT:GetSelection()) do
-                local button = MDT:GetPullButton(pullIdx)
+            for _, pullIdx in ipairs(TDT:GetSelection()) do
+                local button = TDT:GetPullButton(pullIdx)
                 if button then
                     button:RevertColor()
                     local color = {
@@ -642,19 +642,19 @@ local methods = {
                         g = button.color.g,
                         b = button.color.b
                     }
-                    MDT:DungeonEnemies_SetPullColor(pullIdx, color.r, color.g, color.b)
-                    MDT:UpdatePullButtonColor(pullIdx, color.r, color.g, color.b)
-                    MDT:DungeonEnemies_UpdateBlipColors(pullIdx, color.r, color.g, color.b)
+                    TDT:DungeonEnemies_SetPullColor(pullIdx, color.r, color.g, color.b)
+                    TDT:UpdatePullButtonColor(pullIdx, color.r, color.g, color.b)
+                    TDT:DungeonEnemies_UpdateBlipColors(pullIdx, color.r, color.g, color.b)
                 end
             end
 
             self:RevertColor()
-            MDT:DungeonEnemies_SetPullColor(self.index, self.color.r, self.color.g, self.color.b)
-            MDT:UpdatePullButtonColor(self.index, self.color.r, self.color.g, self.color.b)
-            MDT:DungeonEnemies_UpdateBlipColors(self.index, self.color.r, self.color.g, self.color.b)
-            MDT:DrawAllHulls()
-            if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-                MDT:LiveSession_QueueColorUpdate()
+            TDT:DungeonEnemies_SetPullColor(self.index, self.color.r, self.color.g, self.color.b)
+            TDT:UpdatePullButtonColor(self.index, self.color.r, self.color.g, self.color.b)
+            TDT:DungeonEnemies_UpdateBlipColors(self.index, self.color.r, self.color.g, self.color.b)
+            TDT:DrawAllHulls()
+            if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+                TDT:LiveSession_QueueColorUpdate()
             end
         end
         tinsert(self.multiselectMenu, {
@@ -684,20 +684,20 @@ local methods = {
             func = function()
                 local r,g,b = 34/255,139/255,34/255
 
-                if not MDT.U.contains(MDT:GetSelection(), self.index) then
-                    tinsert(MDT:GetSelection(), self.index)
+                if not TDT.U.contains(TDT:GetSelection(), self.index) then
+                    tinsert(TDT:GetSelection(), self.index)
                     self:Pick()
                 end
 
-                for _, pullIdx in ipairs(MDT:GetSelection()) do
-                    MDT:DungeonEnemies_SetPullColor(pullIdx,r,g,b)
-                    MDT:UpdatePullButtonColor(pullIdx, r, g, b)
-                    MDT:DungeonEnemies_UpdateBlipColors(pullIdx,r,g,b)
+                for _, pullIdx in ipairs(TDT:GetSelection()) do
+                    TDT:DungeonEnemies_SetPullColor(pullIdx,r,g,b)
+                    TDT:UpdatePullButtonColor(pullIdx, r, g, b)
+                    TDT:DungeonEnemies_UpdateBlipColors(pullIdx,r,g,b)
                     L_CloseDropDownMenus()
                 end
-                MDT:DrawAllHulls()
-                if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-                    MDT:LiveSession_SendPulls(MDT:GetPulls())
+                TDT:DrawAllHulls()
+                if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+                    TDT:LiveSession_SendPulls(TDT:GetPulls())
                 end
             end
         })
@@ -713,23 +713,23 @@ local methods = {
             text = L["Pull Drop Clear"],
             notCheckable = 1,
             func = function()
-                if not MDT.U.contains(MDT:GetSelection(), self.index) then
-                    tinsert(MDT:GetSelection(), self.index)
+                if not TDT.U.contains(TDT:GetSelection(), self.index) then
+                    tinsert(TDT:GetSelection(), self.index)
                     self:Pick()
                 end
 
-                for _, pullIdx in ipairs(MDT:GetSelection()) do
-                    MDT:ClearPull(pullIdx)
+                for _, pullIdx in ipairs(TDT:GetSelection()) do
+                    TDT:ClearPull(pullIdx)
                 end
-                if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-                    MDT:LiveSession_SendPulls(MDT:GetPulls())
+                if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+                    TDT:LiveSession_SendPulls(TDT:GetPulls())
                 end
             end
         })
         tinsert(self.multiselectMenu, {
             text = L["Pull Drop Reset Preset"],
             notCheckable = 1,
-            func = function() MDT:OpenClearPresetDialog() end
+            func = function() TDT:OpenClearPresetDialog() end
         })
         if self.maxPulls > 1 then
             tinsert(self.multiselectMenu, {
@@ -737,9 +737,9 @@ local methods = {
                 notCheckable = 1,
                 func = function()
                     local addPull = false
-                    local button = MDT:GetFirstNotSelectedPullButton(self.index, "UP")
+                    local button = TDT:GetFirstNotSelectedPullButton(self.index, "UP")
                     if not button then
-                        button = MDT:GetFirstNotSelectedPullButton(self.index, "DOWN")
+                        button = TDT:GetFirstNotSelectedPullButton(self.index, "DOWN")
                         if not button then
                             addPull = true
                             button = 1
@@ -747,29 +747,29 @@ local methods = {
                     end
 
                     local removed_pulls = {}
-                    for _, pullIdx in pairs(MDT.GetSelection()) do
-                        local offset = MDT.U.count_if(removed_pulls, function(entry)
+                    for _, pullIdx in pairs(TDT.GetSelection()) do
+                        local offset = TDT.U.count_if(removed_pulls, function(entry)
                             return entry < pullIdx
                         end)
 
-                        MDT:DeletePull(pullIdx - offset)
+                        TDT:DeletePull(pullIdx - offset)
                         tinsert(removed_pulls, pullIdx)
                     end
 
-                    MDT.GetCurrentPreset().value.selection = {}
+                    TDT.GetCurrentPreset().value.selection = {}
 
                     if not addPull then
-                        local offset = MDT.U.count_if(removed_pulls, function(entry)
+                        local offset = TDT.U.count_if(removed_pulls, function(entry)
                             return entry < button
                         end)
-                        MDT:SetSelectionToPull(button - offset)
+                        TDT:SetSelectionToPull(button - offset)
                     else
-                        --MDT:AddPull(1) --we handle not deleting all pulls in MDT:DeletePull() instead
-                        MDT:SetSelectionToPull(1)
+                        --TDT:AddPull(1) --we handle not deleting all pulls in TDT:DeletePull() instead
+                        TDT:SetSelectionToPull(1)
                     end
-                    MDT:DrawAllHulls()
-                    if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-                        MDT:LiveSession_SendPulls(MDT:GetPulls())
+                    TDT:DrawAllHulls()
+                    if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+                        TDT:LiveSession_SendPulls(TDT:GetPulls())
                     end
                 end
             })
@@ -784,7 +784,7 @@ local methods = {
         tinsert(self.multiselectMenu, {
             text = L["Pull Drop Close"],
             notCheckable = 1,
-            func = MDT.main_frame.sidePanel.optionsDropDown:Hide()
+            func = TDT.main_frame.sidePanel.optionsDropDown:Hide()
         })
 
 
@@ -807,7 +807,7 @@ local methods = {
         self:InitializeScrollHover()
     end,
     ["InitializeScrollHover"] = function(self)
-        local scrollFrame = MDT.main_frame.sidePanel.pullButtonsScrollFrame
+        local scrollFrame = TDT.main_frame.sidePanel.pullButtonsScrollFrame
         local height = (scrollFrame.frame.height or scrollFrame.frame:GetHeight())
 
         self.scroll_hover = {
@@ -912,16 +912,16 @@ local methods = {
         if not self.updateFunction then
             self.updateFunction = function(frame, elapsed)
                 if self.entered and not self.dragging then
-                    MDT:UpdatePullTooltip(MDT.pullTooltip)
+                    TDT:UpdatePullTooltip(TDT.pullTooltip)
                 end
 
                 if self.dragging then
-                    if MDT.pullTooltip:IsShown() then
-                        MDT.pullTooltip:Hide()
+                    if TDT.pullTooltip:IsShown() then
+                        TDT.pullTooltip:Hide()
                     end
 
                     local scroll_hover = self.scroll_hover
-                    local scrollFrame = MDT.main_frame.sidePanel.pullButtonsScrollFrame
+                    local scrollFrame = TDT.main_frame.sidePanel.pullButtonsScrollFrame
                     local height = (scrollFrame.frame.height or scrollFrame.frame:GetHeight())
 
 
@@ -931,9 +931,9 @@ local methods = {
 
                         if self.top_hover > scroll_hover.timeout then
                             local scroll_speed = self:GetScrollSpeed(scrollFrame.frame, scroll_hover.top)
-                            local scroll_pulls = MDT.U.lerp(scroll_hover.pulls_per_second.min, scroll_hover.pulls_per_second.max, scroll_speed)
+                            local scroll_pulls = TDT.U.lerp(scroll_hover.pulls_per_second.min, scroll_hover.pulls_per_second.max, scroll_speed)
                             local scroll_pixel = scroll_pulls * self.frame:GetHeight()
-                            local scroll_amount = MDT:GetScrollingAmount(scrollFrame, scroll_pixel) * scroll_hover.timeout
+                            local scroll_amount = TDT:GetScrollingAmount(scrollFrame, scroll_pixel) * scroll_hover.timeout
 
                             local oldvalue = scrollFrame.localstatus.scrollvalue
                             local newvalue = oldvalue - scroll_amount
@@ -950,9 +950,9 @@ local methods = {
 
                         if self.bottom_hover > scroll_hover.timeout then
                             local scroll_speed = self:GetScrollSpeed(scrollFrame.frame, scroll_hover.bottom)
-                            local scroll_pulls = MDT.U.lerp(scroll_hover.pulls_per_second.min, scroll_hover.pulls_per_second.max, scroll_speed)
+                            local scroll_pulls = TDT.U.lerp(scroll_hover.pulls_per_second.min, scroll_hover.pulls_per_second.max, scroll_speed)
                             local scroll_pixel = scroll_pulls * self.frame:GetHeight()
-                            local scroll_amount = MDT:GetScrollingAmount(scrollFrame, scroll_pixel) * scroll_hover.timeout
+                            local scroll_amount = TDT:GetScrollingAmount(scrollFrame, scroll_pixel) * scroll_hover.timeout
 
                             local oldvalue = scrollFrame.localstatus.scrollvalue
                             local newvalue = oldvalue + scroll_amount
@@ -979,7 +979,7 @@ local methods = {
                     if self.elapsed > 0.1 then
                         local button, pos = select(2, GetDropTarget())
                         --print("Updating", self.index)
-                        MDT:Show_DropIndicator(button, pos)
+                        TDT:Show_DropIndicator(button, pos)
                         self.elapsed = 0
                     end
                 end
@@ -989,25 +989,25 @@ local methods = {
         return self.updateFunction
     end,
     ["Drag"] = function(self)
-        local sidePanel = MDT.main_frame.sidePanel
+        local sidePanel = TDT.main_frame.sidePanel
         local uiscale, scale = UIParent:GetScale(), self.frame:GetEffectiveScale()
         local x, w = self.frame:GetLeft(), self.frame:GetWidth()
         local _, y = GetCursorPosition()
 
-        MDT.pullTooltip:Hide()
+        TDT.pullTooltip:Hide()
 
-        if #MDT:GetSelection() > 1 then
-            if not MDT.U.contains(MDT:GetSelection(), self.index) then
-                for _, pullIdx in pairs(MDT:GetSelection()) do
+        if #TDT:GetSelection() > 1 then
+            if not TDT.U.contains(TDT:GetSelection(), self.index) then
+                for _, pullIdx in pairs(TDT:GetSelection()) do
                     sidePanel.newPullButtons[pullIdx]:ClearPick()
                 end
 
-                MDT:GetCurrentPreset().value.currentPull = self.index
-                MDT:GetCurrentPreset().value.selection = { self.index }
+                TDT:GetCurrentPreset().value.currentPull = self.index
+                TDT:GetCurrentPreset().value.selection = { self.index }
                 self:Pick()
             end
 
-            local selected_pulls = MDT.U.copy(MDT:GetSelection())
+            local selected_pulls = TDT.U.copy(TDT:GetSelection())
             table.sort(selected_pulls)
 
             for _, pullIdx in ipairs(selected_pulls) do
@@ -1055,9 +1055,9 @@ local methods = {
             insertID = insertID + 1
         end
 
-        if #MDT:GetSelection() > 1 then
-            local sidePanel = MDT.main_frame.sidePanel
-            local selected_pulls = MDT.U.copy(MDT:GetSelection())
+        if #TDT:GetSelection() > 1 then
+            local sidePanel = TDT.main_frame.sidePanel
+            local selected_pulls = TDT.U.copy(TDT:GetSelection())
             local new_pulls = {}
             local progressed_pulls = {}
             table.sort(selected_pulls)
@@ -1074,7 +1074,7 @@ local methods = {
                 local pos = insertID + (offset - 1)
                 --print("pos", pos)
 
-                local progressed_above = MDT.U.count_if(progressed_pulls, function(entry)
+                local progressed_above = TDT.U.count_if(progressed_pulls, function(entry)
                     return entry < pos
                 end)
                 --print("progressed above", progressed_above)
@@ -1085,7 +1085,7 @@ local methods = {
                 local correctPullIndex = pullIdx
                 --print("correctPullIndex", correctPullIndex)
                 if pos > correctPullIndex then
-                    correctPullIndex = correctPullIndex - MDT.U.count_if(progressed_pulls, function(entry)
+                    correctPullIndex = correctPullIndex - TDT.U.count_if(progressed_pulls, function(entry)
                         return entry < correctPullIndex
                     end)
                     --print("correctPullIndex", correctPullIndex)
@@ -1096,38 +1096,38 @@ local methods = {
                 end
                 --print("correctPullIndex", correctPullIndex)
 
-                MDT:PresetsAddPull(pos)
-                MDT:CopyPullOptions(correctPullIndex, pos)
-                local newID =  MDT:PresetsMergePulls(correctPullIndex, pos)
+                TDT:PresetsAddPull(pos)
+                TDT:CopyPullOptions(correctPullIndex, pos)
+                local newID =  TDT:PresetsMergePulls(correctPullIndex, pos)
                 --print("newID", newID)
 
                 tinsert(progressed_pulls, pullIdx)
                 tinsert(new_pulls, newID)
             end
 
-            MDT:GetCurrentPreset().value.selection = new_pulls
-            MDT:ReloadPullButtons()
-            MDT:SetSelectionToPull(1)
+            TDT:GetCurrentPreset().value.selection = new_pulls
+            TDT:ReloadPullButtons()
+            TDT:SetSelectionToPull(1)
         else
             local index = self.index
             if index > insertID then
                 index = index + 1
             end
 
-            MDT:PresetsAddPull(insertID)
-            MDT:CopyPullOptions(index, insertID)
-            local newIndex = MDT:PresetsMergePulls(index, insertID)
-            MDT:ReloadPullButtons()
-            MDT:SetSelectionToPull(newIndex)
+            TDT:PresetsAddPull(insertID)
+            TDT:CopyPullOptions(index, insertID)
+            local newIndex = TDT:PresetsMergePulls(index, insertID)
+            TDT:ReloadPullButtons()
+            TDT:SetSelectionToPull(newIndex)
 		end
 		
-		MDT:Hide_DropIndicator()
-		--MDT:UpdateAutomaticColors(math.min(self.index, insertID))
-        MDT:ColorAllPulls(_, math.min(self.index, insertID))
-        MDT:DrawAllHulls()
-        MDT.pullTooltip:Show()
-        if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-            MDT:LiveSession_SendPulls(MDT:GetPulls())
+		TDT:Hide_DropIndicator()
+		--TDT:UpdateAutomaticColors(math.min(self.index, insertID))
+        TDT:ColorAllPulls(_, math.min(self.index, insertID))
+        TDT:DrawAllHulls()
+        TDT.pullTooltip:Show()
+        if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+            TDT:LiveSession_SendPulls(TDT:GetPulls())
         end
     end,
     ["Disable"] = function(self)
@@ -1155,7 +1155,7 @@ local methods = {
     ["SetIndex"] = function(self, index)
         self.index = index
         --set custom pull color
-        self.color.r,self.color.g,self.color.b = MDT:DungeonEnemies_GetPullColor(self.index)
+        self.color.r,self.color.g,self.color.b = TDT:DungeonEnemies_GetPullColor(self.index)
         self:UpdateColor()
     end,
     ["SetMaxPulls"] = function(self, maxPulls)
@@ -1214,7 +1214,7 @@ local methods = {
             self.multiReapingFontString:Hide()
             perc = "|cFFFFFFFF"..perc
         end
-        local pullForces = MDT:CountForces(self.index,true)
+        local pullForces = TDT:CountForces(self.index,true)
         if pullForces>0 then
             self.percentageFontString:SetText(perc)
             self.percentageFontString:Show()
@@ -1245,7 +1245,7 @@ local methods = {
             self.multiPridefulFontString:Hide()
             perc = "|cFFFFFFFF"..perc
         end
-        local pullForces = MDT:CountForces(self.index,true)
+        local pullForces = TDT:CountForces(self.index,true)
         if pullForces>0 then
             self.percentageFontString:SetText(perc)
             self.percentageFontString:Show()
@@ -1254,8 +1254,8 @@ local methods = {
         end
     end,
     ["UpdateColor"] = function(self)
-        local colorHex = MDT:RGBToHex(self.color.r,self.color.g,self.color.b)
-        local db = MDT:GetDB()
+        local colorHex = TDT:RGBToHex(self.color.r,self.color.g,self.color.b)
+        local db = TDT:GetDB()
         if colorHex == db.defaultColor then
             self.background:SetVertexColor(0.5,0.5,0.5,0.25)
             self.frame.pickedGlow:SetVertexColor(1,0.85,0,1)
@@ -1283,7 +1283,7 @@ local methods = {
 }
 --Constructor
 local function Constructor()
-    local name = "MDTPullButton"..AceGUI:GetNextWidgetNum(Type);
+    local name = "TDTPullButton"..AceGUI:GetNextWidgetNum(Type);
     local button = CreateFrame("BUTTON", name, UIParent, "OptionsListButtonTemplate");
     button:SetHeight(height);
     button:SetWidth(width);

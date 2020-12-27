@@ -1,7 +1,7 @@
-local MDT = MDT
-local L = MDT.L
+local TDT = TDT
+local L = TDT.L
 local dungeonIndex = 16
-MDT.mapInfo[dungeonIndex] = {
+TDT.mapInfo[dungeonIndex] = {
     viewportPositionOverrides =
     {
         [1] = {
@@ -12,15 +12,15 @@ MDT.mapInfo[dungeonIndex] = {
     };
 };
 
-MDT.scaleMultiplier[dungeonIndex] = 0.6
+TDT.scaleMultiplier[dungeonIndex] = 0.6
 
-MDT.dungeonTotalCount[dungeonIndex] = {normal=261,teeming=313,teemingEnabled=true}
+TDT.dungeonTotalCount[dungeonIndex] = {normal=261,teeming=313,teemingEnabled=true}
 
 local selectorGroup
 local AceGUI = LibStub("AceGUI-3.0")
 local db
 local function fixFreeholdShowHide(widget,frame,isFrame)
-    frame = frame or MDT.main_frame
+    frame = frame or TDT.main_frame
     local originalShow,originalHide = frame.Show,frame.Hide
     if not isFrame then
         widget = widget.frame
@@ -37,8 +37,8 @@ local function fixFreeholdShowHide(widget,frame,isFrame)
     end
 end
 
-function MDT:ToggleFreeholdSelector(show)
-    db = MDT:GetDB()
+function TDT:ToggleFreeholdSelector(show)
+    db = TDT:GetDB()
     if not selectorGroup then
         selectorGroup = AceGUI:Create("SimpleGroup")
         selectorGroup.frame:SetFrameStrata("HIGH")
@@ -46,35 +46,35 @@ function MDT:ToggleFreeholdSelector(show)
         if not selectorGroup.frame.SetBackdrop then
             Mixin(selectorGroup.frame, BackdropTemplateMixin)
         end
-        selectorGroup.frame:SetBackdropColor(unpack(MDT.BackdropColor))
+        selectorGroup.frame:SetBackdropColor(unpack(TDT.BackdropColor))
         fixFreeholdShowHide(selectorGroup)
         selectorGroup:SetLayout("Flow")
         selectorGroup.frame.bg = selectorGroup.frame:CreateTexture(nil, "BACKGROUND")
         selectorGroup.frame.bg:SetAllPoints(selectorGroup.frame)
-        selectorGroup.frame.bg:SetColorTexture(unpack(MDT.BackdropColor))
+        selectorGroup.frame.bg:SetColorTexture(unpack(TDT.BackdropColor))
         selectorGroup:SetWidth(120)
         selectorGroup:SetHeight(90)
-        selectorGroup.frame:SetPoint("TOPRIGHT", MDT.main_frame,"TOPRIGHT",0,0)
+        selectorGroup.frame:SetPoint("TOPRIGHT", TDT.main_frame,"TOPRIGHT",0,0)
 
     end
-    MDT:UpdateFreeholdSelector(MDT:GetCurrentPreset().week)
+    TDT:UpdateFreeholdSelector(TDT:GetCurrentPreset().week)
     if show then
         selectorGroup.frame:Show()
-        MDT:DungeonEnemies_UpdateFreeholdCrew(MDT:GetCurrentPreset().freeholdCrew)
-        MDT:ReloadPullButtons()
-        MDT:UpdateProgressbar()
+        TDT:DungeonEnemies_UpdateFreeholdCrew(TDT:GetCurrentPreset().freeholdCrew)
+        TDT:ReloadPullButtons()
+        TDT:UpdateProgressbar()
     else
         selectorGroup.frame:Hide()
-        MDT:DungeonEnemies_UpdateFreeholdCrew()
+        TDT:DungeonEnemies_UpdateFreeholdCrew()
     end
 end
 
-function MDT:UpdateFreeholdSelector(week)
+function TDT:UpdateFreeholdSelector(week)
     if not selectorGroup then return end
     week = week%3
     if week == 0 then week = 3 end
     selectorGroup:ReleaseChildren()
-    MDT:GetCurrentPreset().freeholdCrew = (MDT:GetCurrentPreset().freeholdCrew and week) or nil
+    TDT:GetCurrentPreset().freeholdCrew = (TDT:GetCurrentPreset().freeholdCrew and week) or nil
     local label = AceGUI:Create("Label")
     label:SetText("  Join Crew:")
     selectorGroup:AddChild(label)
@@ -82,19 +82,19 @@ function MDT:UpdateFreeholdSelector(week)
     check:SetLabel((week==2 and "Blacktooth") or (week==1 and "Cutwater") or (week==3 and "Bilge Rats"))
     selectorGroup:AddChild(check)
     check:SetCallback("OnValueChanged",function(widget,callbackName,value)
-        MDT:GetCurrentPreset().freeholdCrew = (value and week) or nil
-        if MDT.liveSessionActive and MDT:GetCurrentPreset().uid == MDT.livePresetUID then
-            MDT:LiveSession_SendFreeholdSelector(value,week)
+        TDT:GetCurrentPreset().freeholdCrew = (value and week) or nil
+        if TDT.liveSessionActive and TDT:GetCurrentPreset().uid == TDT.livePresetUID then
+            TDT:LiveSession_SendFreeholdSelector(value,week)
         end
-        MDT:DungeonEnemies_UpdateFreeholdCrew(MDT:GetCurrentPreset().freeholdCrew)
-        MDT:ReloadPullButtons()
-        MDT:UpdateProgressbar()
+        TDT:DungeonEnemies_UpdateFreeholdCrew(TDT:GetCurrentPreset().freeholdCrew)
+        TDT:ReloadPullButtons()
+        TDT:UpdateProgressbar()
     end)
-    check:SetValue(MDT:GetCurrentPreset().freeholdCrew)
-    MDT:DungeonEnemies_UpdateFreeholdCrew(MDT:GetCurrentPreset().freeholdCrew)
+    check:SetValue(TDT:GetCurrentPreset().freeholdCrew)
+    TDT:DungeonEnemies_UpdateFreeholdCrew(TDT:GetCurrentPreset().freeholdCrew)
 end
 
-MDT.mapPOIs[dungeonIndex] = {
+TDT.mapPOIs[dungeonIndex] = {
     [1] = {
         [1] = {
             ["y"] = -200.49488376925;
@@ -254,7 +254,7 @@ MDT.mapPOIs[dungeonIndex] = {
     };
 };
 
-MDT.dungeonEnemies[dungeonIndex] = {
+TDT.dungeonEnemies[dungeonIndex] = {
     [1] = {
         ["clones"] = {
             [1] = {
